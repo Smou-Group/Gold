@@ -1,92 +1,135 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<title>كشف العائلة</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>الكبائن الذهبية | Golden Cabin — SMOU GROUP</title>
 
 <style>
-body{
-  font-family: Tahoma, Arial;
-  background:#f7f7f7;
-  padding:20px;
+:root{
+--gold:#c9a227;
+--gold2:#a8841f;
+--bg:#fffaf0;
+--card:#ffffff;
+--shadow:0 10px 30px rgba(0,0,0,.08);
+--radius:18px;
 }
-h2{margin-bottom:10px}
-input{
-  padding:10px;
-  width:300px;
-  font-size:16px;
+body{margin:0;font-family:system-ui;background:var(--bg);}
+header{
+background:linear-gradient(90deg,var(--gold2),var(--gold));
+color:#fff;padding:18px 25px;
+display:flex;justify-content:space-between;align-items:center;
 }
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
-  background:#fff;
+header h1{margin:0;font-size:18px}
+main{max-width:1300px;margin:40px auto;padding:0 20px}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:25px;
 }
-th,td{
-  border:1px solid #ccc;
-  padding:10px;
-  text-align:right;
+.card{
+background:var(--card);
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+overflow:hidden;
+transition:.25s;
+cursor:pointer;
 }
-th{
-  background:#0f5c6e;
-  color:#fff;
+.card:hover{transform:translateY(-6px)}
+.thumb{
+aspect-ratio:3/4;
+background:#fdf2c8;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
 }
-tr:nth-child(even){background:#f2f2f2}
-.note{color:#666;margin-top:8px}
+.thumb img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+.code{
+position:absolute;
+top:10px;
+left:10px;
+background:var(--gold);
+color:#fff;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+.bottom{
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.open{
+background:var(--gold);
+color:#fff;
+padding:7px 14px;
+border-radius:10px;
+text-decoration:none;
+font-size:13px;
+}
+.open:hover{background:var(--gold2)}
 </style>
 </head>
 
 <body>
 
-<h2>🔎 البحث باسم العائلة</h2>
+<header>
+<h1>الكبائن الذهبية — Golden Cabin</h1>
+<strong>SMOU GROUP</strong>
+</header>
 
-<input id="search" placeholder="اكتب اسم العائلة" />
-<div class="note" id="info">يرجى رفع ملف البيانات</div>
-<br><br>
-<input type="file" id="file" accept=".csv">
-
-<table id="table" style="display:none">
-  <thead></thead>
-  <tbody></tbody>
-</table>
+<main>
+<div class="grid" id="grid"></div>
+</main>
 
 <script>
-let data=[], headers=[];
-const FAMILY_COL = "العائلة";
+const items = [
+{img:"G001.png",href:"http://720yun.com/t/d28jzOmyua1"},
+{img:"G002.png",href:"https://www.720yun.com/t/632ju7skuw9#scene_id=25125959"},
+{img:"G003.png",href:"https://my.3vfang.com/p/share/content.php?m=bGR5cy1pdGVtPTQyMTk5"},
+{img:"G004.png",href:"https://my.3vfang.com/p/share/content.php?m=bGR5cy1pdGVtPTQyMjAw"},
+{img:"G005.png",href:"https://my.3vfang.com/p/share/content.php?m=bGR5cy1pdGVtPTQyMTk2"},
+{img:"G006.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NDYxNDg="},
+{img:"G007.png",href:"https://my.3vfang.com/p/share/content.php?m=bGR5cy1pdGVtPTQyMTky"},
+{img:"G008.png",href:"https://my.3vfang.com/p/share/content.php?m=bGR5cy1pdGVtPTQyMTkz"},
+{img:"G009.png",href:"https://my.3vfang.com/p/share/content.php?m=bGR5cy1pdGVtPTM1MDc4"},
+{img:"G010.png",href:"https://my.3vfang.com/p/share/content.php?m=bGR5cy1pdGVtPTM1MDc5"},
+{img:"G011.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2ODk="},
+{img:"G012.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2OTA="},
+{img:"G013.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2ODQ="},
+{img:"G014.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2ODU="},
+{img:"G015.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2ODI="},
+{img:"G016.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2ODM="},
+{img:"G017.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2ODA="},
+{img:"G018.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2ODE="},
+{img:"G019.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2Nzg="},
+{img:"G020.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2Nzk="}
+];
 
-document.getElementById("file").addEventListener("change", async e=>{
-  const text = await e.target.files[0].text();
-  const lines = text.trim().split("\n");
-  headers = lines[0].split(",");
-  data = lines.slice(1).map(l=>{
-    let obj={};
-    l.split(",").forEach((v,i)=>obj[headers[i]]=v);
-    return obj;
-  });
-  document.getElementById("info").innerText="تم تحميل البيانات";
-});
+const grid=document.getElementById("grid");
 
-document.getElementById("search").addEventListener("input",()=>{
-  const q = document.getElementById("search").value.trim();
-  const table = document.getElementById("table");
-  const thead = table.querySelector("thead");
-  const tbody = table.querySelector("tbody");
-
-  if(!q){ table.style.display="none"; return; }
-
-  const norm = s => (s||"").toString().trim().replace(/\s+/g," ");
-const res = data.filter(r => norm(r[FAMILY_COL]).includes(norm(q)));
-
-  if(!res.length){
-    document.getElementById("info").innerText="لا توجد نتائج";
-    table.style.display="none";
-    return;
-  }
-
-  thead.innerHTML="<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>";
-  tbody.innerHTML=res.map(r=>"<tr>"+headers.map(h=>`<td>${r[h]||""}</td>`).join("")+"</tr>").join("");
-  table.style.display="table";
-  document.getElementById("info").innerText=`عدد النتائج: ${res.length}`;
+items.forEach(it=>{
+const code=it.img.replace(".png","");
+const card=document.createElement("div");
+card.className="card";
+card.innerHTML=`
+<div class="thumb">
+<span class="code">${code}</span>
+<img src="${it.img}" alt="${code}"
+onerror="this.outerHTML='<div style=\\'color:#a8841f;font-weight:bold\\'>Image not found: ${code}</div>';">
+</div>
+<div class="bottom">
+<strong>${code}</strong>
+<a class="open" href="${it.href}" target="_blank">فتح</a>
+</div>`;
+grid.appendChild(card);
 });
 </script>
 

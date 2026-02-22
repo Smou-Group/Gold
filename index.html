@@ -7,86 +7,111 @@
 
 <style>
 :root{
---gold:#c9a227;
---gold2:#a8841f;
---bg:#fffaf0;
---card:#ffffff;
---shadow:0 10px 30px rgba(0,0,0,.08);
---radius:18px;
+  --navy:#3a2506;
+  --navy2:#5a3b09;
+  --gold:#c59a2d;
+  --gold2:#a8821f;
+  --bg:#fdf8ef;
+  --card:#ffffff;
+  --text:#2b1d05;
+  --shadow:0 10px 30px rgba(0,0,0,.15);
 }
-body{margin:0;font-family:system-ui;background:var(--bg);}
-header{
-background:linear-gradient(90deg,var(--gold2),var(--gold));
-color:#fff;padding:18px 25px;
-display:flex;justify-content:space-between;align-items:center;
+
+body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text);}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:55vh;
+  padding:30px 0;
+  color:#fff;
+  background:
+    url("back.webp") center/cover no-repeat,
+    url("back.jpg") center/cover no-repeat,
+    url("back.png") center/cover no-repeat,
+    linear-gradient(180deg,var(--navy),var(--navy2));
+  position:relative;
 }
-header h1{margin:0;font-size:18px}
-main{max-width:1300px;margin:40px auto;padding:0 20px}
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:25px;
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.6));
+}
+.container{position:relative;max-width:1300px;margin:auto;padding:0 20px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;}
+.brand{display:flex;align-items:center;gap:12px;}
+.logo{
+  width:50px;height:50px;border-radius:12px;
+  background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+}
+.logo img{width:80%;height:80%;object-fit:contain;}
+.titleBox h1{margin:0;font-size:20px;}
+.titleBox span{font-size:12px;opacity:.9;}
+
+.search input{
+  padding:10px 15px;border-radius:20px;border:none;
+  outline:none;background:rgba(255,255,255,.15);
+  color:#fff;width:250px;
+}
+.heroText{margin-top:80px;}
+.heroText h2{margin:0;font-size:28px;}
+.heroText p{margin-top:10px;opacity:.9;}
+
+/* ===== Slider ===== */
+main{max-width:1300px;margin:30px auto;padding:0 20px;}
+.track{
+  display:flex;gap:20px;overflow:auto;
+  scroll-snap-type:x mandatory;
 }
 .card{
-background:var(--card);
-border-radius:var(--radius);
-box-shadow:var(--shadow);
-overflow:hidden;
-transition:.25s;
-cursor:pointer;
+  min-width:240px;background:#fff;border-radius:15px;
+  overflow:hidden;box-shadow:var(--shadow);
+  scroll-snap-align:start;cursor:pointer;
+  transition:.2s;
 }
-.card:hover{transform:translateY(-6px)}
-.thumb{
-aspect-ratio:3/4;
-background:#fdf2c8;
-display:flex;
-align-items:center;
-justify-content:center;
-position:relative;
+.card:hover{transform:translateY(-5px);}
+.thumb{aspect-ratio:3/4;overflow:hidden;}
+.thumb img{width:100%;height:100%;object-fit:cover;}
+.meta{
+  padding:15px;display:flex;justify-content:space-between;align-items:center;
 }
-.thumb img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-.code{
-position:absolute;
-top:10px;
-left:10px;
-background:var(--gold);
-color:#fff;
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-}
-.bottom{
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+.meta b{color:var(--navy2);}
 .open{
-background:var(--gold);
-color:#fff;
-padding:7px 14px;
-border-radius:10px;
-text-decoration:none;
-font-size:13px;
+  text-decoration:none;background:var(--gold);
+  color:#fff;padding:8px 12px;border-radius:10px;
 }
-.open:hover{background:var(--gold2)}
+.open:hover{background:var(--gold2);}
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>الكبائن الذهبية — Golden Cabin</h1>
-<strong>SMOU GROUP</strong>
-</header>
+<section class="hero">
+<div class="container">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <img src="logo.png" alt="SMOU GROUP">
+      </div>
+      <div class="titleBox">
+        <h1>الكبائن الذهبية — Golden Cabin</h1>
+        <span>SMOU GROUP</span>
+      </div>
+    </div>
+    <div class="search">
+      <input id="searchInput" type="search" placeholder="ابحث بالكود... مثال G012">
+    </div>
+  </div>
+
+  <div class="heroText">
+    <h2>معرض الكبائن الذهبية</h2>
+    <p>اسحب يمين/يسار للتصفح. اضغط فتح للانتقال إلى رابط العرض.</p>
+  </div>
+</div>
+</section>
 
 <main>
-<div class="grid" id="grid"></div>
+<div class="track" id="track"></div>
 </main>
 
 <script>
@@ -113,24 +138,34 @@ const items = [
 {img:"G020.png",href:"https://my.3vfang.com/p/share/content.php?m=a3I4MDM5LWl0ZW09NTI2Nzk="}
 ];
 
-const grid=document.getElementById("grid");
+const track=document.getElementById("track");
+const searchInput=document.getElementById("searchInput");
 
-items.forEach(it=>{
-const code=it.img.replace(".png","");
-const card=document.createElement("div");
-card.className="card";
-card.innerHTML=`
-<div class="thumb">
-<span class="code">${code}</span>
-<img src="${it.img}" alt="${code}"
-onerror="this.outerHTML='<div style=\\'color:#a8841f;font-weight:bold\\'>Image not found: ${code}</div>';">
-</div>
-<div class="bottom">
-<strong>${code}</strong>
-<a class="open" href="${it.href}" target="_blank">فتح</a>
-</div>`;
-grid.appendChild(card);
+function render(list){
+  track.innerHTML="";
+  list.forEach(it=>{
+    const code=it.img.replace(".png","");
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <div class="thumb">
+        <img src="${it.img}" alt="${code}">
+      </div>
+      <div class="meta">
+        <b>${code}</b>
+        <a class="open" href="${it.href}" target="_blank">فتح</a>
+      </div>
+    `;
+    track.appendChild(card);
+  });
+}
+
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.toLowerCase();
+  render(items.filter(i=>i.img.toLowerCase().includes(q)));
 });
+
+render(items);
 </script>
 
 </body>
